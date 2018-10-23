@@ -4,8 +4,8 @@ from curses import KEY_RIGHT, KEY_LEFT, KEY_UP, KEY_DOWN
 class InputConverter:
 	# def __init__():
 
-	@classmethod
-	def convertUserInput(self, direction, userInput):
+	@staticmethod
+	def convertUserInput(direction, userInput):
 		action = -1
 		if(direction == 0):
 			if(userInput == curses.KEY_DOWN):

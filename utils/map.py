@@ -1,3 +1,5 @@
+from snake import*
+
 class setMap:
 	width = 0
 	height = 0
@@ -9,13 +11,14 @@ class setMap:
 		self.snakeMap = { (i,j):-2 for i in range(map_width) for j in range(map_height) }
 
 	def updateMap(self, snake, food):
+
 		self.snakeMap = [[0 for x in range(self.width)] for y in range(self.height)]
 		for y in range(self.height): 
 			for x in range(self.width):
 				currentPos = [x, y]
 				if(y == 0 or x == 0 or x == self.width - 1 or y == self.height - 1):
 					self.snakeMap[x][y] = -2
-				elif(currentPos in snake):
+				elif(currentPos in snake.getSnake()):
 					self.snakeMap[x][y] = -1
 				elif(food == currentPos):
 					self.snakeMap[x][y] = 1
