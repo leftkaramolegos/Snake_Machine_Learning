@@ -1,4 +1,5 @@
 import curses
+import os.path
 from curses import KEY_RIGHT, KEY_LEFT, KEY_UP, KEY_DOWN
 from random import randint
 from utils.directionUtils import*
@@ -29,14 +30,15 @@ action = -1
 				# 2 -> turn left
 				# -1 -> no action
 
-snake = Snake()
-food = [5, 5]
-
 key = -1
 width = 12
 height = 12
+snake = Snake()
 myMap = setMap(width, height)
-myMap.updateMap(snake, food)
+myMap.updateMap(snake)
+snake.newFoodPosition(myMap)
+myMap.updateMap(snake)
+lost = False
 s = ''
 map = [[0 for x in range(width)] for y in range(height)]
 while key != 27:
@@ -44,38 +46,56 @@ while key != 27:
 	win.addstr(0, 0, s)
 	action = InputConverter.convertUserInput(direction, key)
 	direction = Direction.getDirectionFromAction(direction, action)
+
 	if(action != -1):
-		snake.updateSnake(direction, food)
-		myMap.updateMap(snake, food)
-
+		lost = snake.updateSnake(direction, myMap)
+		logText = myMap.printMapDetailed(snake) + '\n'
+		fileName = 'tempaAction' + str(action) + '.log'
+		file = open(fileName, "a")
+		file.write(logText)
+		file.close()
+		myMap.updateMap(snake)
+	if(lost):
+		break
+	if(snake.getScore() == 97):
+		break
 	#log map on action file
-
-	#check for food or if looses and recalculate if needed
-	#if loose curses.endwin()
-
-	#update snake
-	#head = sname[-1]
 
 	#draw 
 	l = []
 	#Draw map!
 	l.append('Map: \n' + myMap.drawMap() + '\n')
-
-
-	#temp
-	text = ''
-	for x in snake.getSnake():
-		text = text + str(x)
-
-	#Draw info
-	l.append('text: ' + text + '\n')
-	l.append('Length: ' + str(len(snake.getSnake())) + '\n')
-	l.append('Action: ' + str(action) + '\n')
+	# l.append('Snake: ' + str(snake.getSnake()) + '\n')
+	l.append('Score: ' + str(snake.getScore()) + '\n')
 	l.append('Direction: ' + str(direction) + '\n')
-	l.append('Key: ' + str(key) + '\n')
-	# l.append('Snake: ' + str(snake) + '\n')
-	# l.append('Snake: ' + str(snake) + '\n')
-	# l.append('Map: \n' + myMap.printMap(myMap.snakeMap) + '\n')
 	s = ''.join(l)                          
 
 curses.endwin()
+shouldSave =''
+shouldSave = input("Press y to save logs ")
+if(shouldSave == 'y'):
+	for x in range(3):
+		tempFileName = 'tempaAction' + str(x) + '.log'
+		fileName = 'action' + str(x) + '.log'
+		f1 = open(tempFileName,"r")
+		if f1.mode == 'r':
+			contents = f1.read()
+			f1.close()
+			f2 = open(fileName, "a")
+			f2.write(contents)
+			f2.close()
+			f1 = open(tempFileName,"w")
+			f1.write('')
+			f1.close()
+	print ('Saved')
+else:
+	for x in range(3):
+		tempFileName = 'tempaAction' + str(x) + '.log'
+		f1 = open(tempFileName,"w")
+		f1.write('')
+		f1.close()
+	print ('Discarded')
+
+
+
+

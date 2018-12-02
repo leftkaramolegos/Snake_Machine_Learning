@@ -1,12 +1,16 @@
 import copy
+from random import randint
 
 class Snake:
 	snake = []
+	food = []
+	score = 0
 
 	def __init__(self):
-		self.snake = [[3, 1], [2, 1], [1, 1]]
+		self.snake = [[3, 1], [2, 1], [1, 1]]#[[3, 1], [2, 1], [1, 1]] #
 
-	def updateSnake(self, direction, food):
+
+	def updateSnake(self, direction, map):
 		# 0 -> moving right 
 		# 1 -> moving down
 		# 2 -> moving left
@@ -21,12 +25,52 @@ class Snake:
 		elif(direction == 3):
 			head[1] = head[1] - 1
 		self.snake.insert(0, head)
-		if(self.snake[0] == food):
-			x = 0
+		if(head[0] < 1 or head[0] > 10 or head[1] < 1 or head[1] > 10):
+			return True
+
+		#food eaten
+		headPosition = self.snake[0]
+		if(headPosition == self.food):
+			self.newFoodPosition(map)
+			self.score += 1
 		else:
 			self.snake.pop()
-		
 
+		if(headPosition in self.snake[1:]):
+			return True
+		return False
+
+	def newFoodPosition(self, map):
+		food = []
+		count = 0
+		tempMap = map.getMap()
+		for tempList in tempMap:
+			count += tempList.count(0)
+		if(count == 0):
+			food = [-1,-1]
+			return
+		cellPosition = randint(0, count - 1)
+		i = -1
+		for row in tempMap:
+			if(food != []):
+				break
+			i += 1
+			j = -1
+			for cell in row:
+				j += 1
+				if(cell == 0):
+					if(cellPosition == 0):
+						food = [i, j]
+						break
+					else:
+						cellPosition = cellPosition - 1
+		self.food = food
+
+	def getScore(self):
+		return self.score
 
 	def getSnake(self):
 		return self.snake
+
+	def getFood(self):
+		return self.food

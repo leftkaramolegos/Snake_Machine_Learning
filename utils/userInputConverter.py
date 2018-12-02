@@ -3,7 +3,10 @@ from curses import KEY_RIGHT, KEY_LEFT, KEY_UP, KEY_DOWN
 
 class InputConverter:
 	# def __init__():
-
+	
+				# 0 -> turn right 
+				# 1 -> keep moving in the same direction
+				# 2 -> turn left
 	@staticmethod
 	def convertUserInput(direction, userInput):
 		action = -1
