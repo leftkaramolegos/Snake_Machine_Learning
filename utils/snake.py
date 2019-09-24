@@ -7,7 +7,7 @@ class Snake:
 	score = 0
 
 	def __init__(self):
-		self.snake = [[3, 1], [2, 1], [1, 1]]#[[3, 1], [2, 1], [1, 1]] #
+		self.snake = [[2, 0], [1, 0], [0, 0]]
 
 
 	def updateSnake(self, direction, map):
@@ -25,7 +25,7 @@ class Snake:
 		elif(direction == 3):
 			head[1] = head[1] - 1
 		self.snake.insert(0, head)
-		if(head[0] < 1 or head[0] > 10 or head[1] < 1 or head[1] > 10):
+		if(head[0] < 0 or head[0] > 9 or head[1] < 0 or head[1] > 9):
 			return True
 
 		#food eaten

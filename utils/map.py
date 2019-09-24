@@ -1,5 +1,4 @@
 from utils.snake import*
-# from snake import*
 
 class setMap:
 	width = 0
@@ -19,11 +18,10 @@ class setMap:
 		# 4 -> head
 	def updateMap(self, snake):
 		snakeList = snake.getSnake()
-		# subSnakeList = [subList[:2] for subList in snakeList]
 		for y in range(self.height): 
 			for x in range(self.width):
 				currentPos = [x, y]
-				if(y == 0 or x == 0 or x == self.width - 1 or y == self.height - 1):
+				if(y == -1 or x == -1 or x == self.width or y == self.height):
 					self.snakeMap[x][y] = 1
 				elif(currentPos in snakeList):
 					if(currentPos == snakeList[0]):
@@ -50,35 +48,24 @@ class setMap:
 				elif(self.snakeMap[x][y] == 3):
 					mapString = mapString + ' *'
 			mapString = mapString + '\n'
-			# mapString = 'as'#str(self.width)
 		return mapString 
 
 	@staticmethod
 	def printMapDetailed(snake):
 		snakeList = snake.getSnake()
-		detailedMap = [[0 for x in range(12)] for y in range(12)]
-		for y in range(12): 
-			for x in range(12):
+		detailedMap = [[0 for x in range(10)] for y in range(10)]
+		for x in range(10): 
+			for y in range(10):
 				currentPos = [x, y]
 				if(currentPos in snakeList):
 					pos = snakeList.index(currentPos)
-					detailedMap[x][y] = 1 - (pos * 0.01)
+					detailedMap[x][y] = format(1 - (pos * 0.01), '.2f')
 				elif(snake.getFood() == currentPos):
 					detailedMap[x][y] = 3
 				else:
 					detailedMap[x][y] = 0
 		mapString = ''
-		for y in range(1, 11):
-			for x in range(1, 11):
+		for y in range(0, 10):
+			for x in range(0, 10):
 				mapString = mapString + str(detailedMap[x][y]) + ','
 		return mapString[:-1]
-
-
-	@staticmethod	
-	def printMap(mapArray):
-		mapString = ''
-		for y in range(1, 11):
-			for x in range(1, 11):
-				mapString = mapString + str(mapArray[x][y])
-		return mapString
-

@@ -1,49 +1,47 @@
-import curses
-from curses import KEY_RIGHT, KEY_LEFT, KEY_UP, KEY_DOWN
+from PyQt5 import QtCore
 
 class InputConverter:
-	# def __init__():
-	
-				# 0 -> turn right 
-				# 1 -> keep moving in the same direction
-				# 2 -> turn left
+    # 0 -> turn right
+    # 1 -> keep moving in the same direction
+    # 2 -> turn left
+
 	@staticmethod
 	def convertUserInput(direction, userInput):
 		action = -1
 		if(direction == 0):
-			if(userInput == curses.KEY_DOWN):
+			if(userInput == QtCore.Qt.Key_Down):
 				action = 0
-			elif(userInput == curses.KEY_UP):
+			elif(userInput == QtCore.Qt.Key_Up):
 				action = 2
-			elif(userInput == curses.KEY_RIGHT):
+			elif(userInput == QtCore.Qt.Key_Right):
 				action = 1
-			elif(userInput == curses.KEY_LEFT):
+			elif(userInput == QtCore.Qt.Key_Left):
 				action = -1
 		elif(direction == 1):
-			if(userInput == curses.KEY_DOWN):
+			if(userInput == QtCore.Qt.Key_Down):
 				action = 1
-			elif(userInput == curses.KEY_UP):
+			elif(userInput == QtCore.Qt.Key_Up):
 				action = -1
-			elif(userInput == curses.KEY_RIGHT):
+			elif(userInput == QtCore.Qt.Key_Right):
 				action = 2
-			elif(userInput == curses.KEY_LEFT):
+			elif(userInput == QtCore.Qt.Key_Left):
 				action = 0
 		elif(direction == 2):
-			if(userInput == curses.KEY_DOWN):
+			if(userInput == QtCore.Qt.Key_Down):
 				action = 2
-			elif(userInput == curses.KEY_UP):
+			elif(userInput == QtCore.Qt.Key_Up):
 				action = 0
-			elif(userInput == curses.KEY_RIGHT):
+			elif(userInput == QtCore.Qt.Key_Right):
 				action = -1
-			elif(userInput == curses.KEY_LEFT):
+			elif(userInput == QtCore.Qt.Key_Left):
 				action = 1
 		elif(direction == 3):
-			if(userInput == curses.KEY_DOWN):
+			if(userInput == QtCore.Qt.Key_Down):
 				action = -1
-			elif(userInput == curses.KEY_UP):
+			elif(userInput == QtCore.Qt.Key_Up):
 				action = 1
-			elif(userInput == curses.KEY_RIGHT):
+			elif(userInput == QtCore.Qt.Key_Right):
 				action = 0
-			elif(userInput == curses.KEY_LEFT):
+			elif(userInput == QtCore.Qt.Key_Left):
 				action = 2
 		return action
