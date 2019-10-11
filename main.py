@@ -9,12 +9,17 @@ from utils.map import*
 from utils.userInputConverter import*
 from utils.snake import*
 from utils.drawEdges import*
+from sklearn import model_selection
+from sklearn.externals import joblib
 
 class Example(QWidget):
     shouldClose = False
     color = QColor(0, 0, 0)
     color = '#ffffff'
-    snakeMap = [[0 for x in range(10)] for y in range(10)]
+    txt = input("Type y to train: ")
+    isTraining = False
+    if(txt == 'y'):
+        isTraining = True
     direction = 0
 				# direction 
 				# 0 -> moving right 
@@ -36,6 +41,7 @@ class Example(QWidget):
     myMap.updateMap(snake)
     lost = False
     s = ''
+    loaded_model = joblib.load('snakeModel.sav')
 
 
     def __init__(self):
@@ -59,6 +65,7 @@ class Example(QWidget):
 
     def keyPressEvent(self, event):
         key = event.key()
+
         if (self.shouldClose):
             if(key == QtCore.Qt.Key_Y):
                 self.saveLogs()
@@ -69,12 +76,47 @@ class Example(QWidget):
                 self.close()
 
         if(key == QtCore.Qt.Key_Escape): 
-        	self.shouldClose = True
+            self.shouldClose = True
 
         logText = self.myMap.printMapDetailed(self.snake) + '\n'
-        self.action = InputConverter.convertUserInput(self.direction, key)
-        self.direction = Direction.getDirectionFromAction(self.direction, self.action)
         
+        if(self.isTraining):
+            self.action = InputConverter.convertUserInput(self.direction, key)
+        else:
+            count = 0
+            a = [float(i) for i in logText.split(',')]
+            for i in range(10):
+                for j in range(10):
+                    x = [[0 for x in range(10)]for y in range(10)]
+                    x[i][j] = a[count]
+                    count += 1
+            strng = ''
+            for i in range(10):
+                for j in range(10):
+                    strng = strng + str(x[i][j])
+                strng = strng + '\n'
+            print(strng)
+            strng = ''
+            rotated = zip(*x[::-1])
+            for i in range(10):
+                for j in range(10):
+                    strng = strng + str(rotated[i][j])
+                strng = strng + '\n'
+            print(strng)
+            # print(rotated)
+            # predict
+            # print(logText)
+            xTest = []
+            xTest.append(a)
+            # print(xTest)
+            predicted=self.loaded_model.predict(xTest)
+            score = self.loaded_model.predict_proba(xTest)
+            print(predicted)
+            print(score)
+            self.action = predicted #InputConverter.convertUserInput(self.direction, key)
+
+        self.direction = Direction.getDirectionFromAction(self.direction, self.action)
+
         if(self.action != -1):
             self.lost = self.snake.updateSnake(self.direction, self.myMap)
             fileName = 'tempaAction' + str(self.action) + '.log'
@@ -87,6 +129,7 @@ class Example(QWidget):
         if(self.snake.getScore() == 97):
             self.shouldClose = True
         self.update()
+        # print (self.myMap.printMapDetailed(self.snake))
 
 # save
     @staticmethod

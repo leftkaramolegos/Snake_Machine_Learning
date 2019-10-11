@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import random
+import time
 from datetime import datetime
 import matplotlib.pyplot as plt
 from sklearn import model_selection
@@ -8,6 +9,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score
 from sklearn import tree
+from sklearn.externals import joblib
 
 class Util():
 
@@ -36,27 +38,46 @@ instanceArray = []
 for x in range(3):
     filePath = 'action' + str(x) + '.log'
     with open(filePath) as fp:
-        print(len(list(fp)))
-        for cnt, line in enumerate(fp):
-            strResults = [x.strip() for x in line.split(',')]
-            results = [float(x) for x in line.split(',')]
+        linesList = list(fp)
+        # if(x == 1):
+        #     linesList = linesList[:len(linesList)//2]
+        for line in linesList:
+            results = [float(i) for i in line.split(',')]
             instanceArray.append(results)
             actionArray.append(x)
-print(len(actionArray))
+print('Data collected')
+xTrain = instanceArray
+yTrain = actionArray
+kfold = model_selection.KFold(n_splits=10, random_state=20)
+model = RandomForestClassifier(bootstrap=True, class_weight='balanced_subsample',
+	        max_features='auto', max_leaf_nodes=None,
+            min_impurity_decrease=0.0, min_samples_split=3, n_estimators=100, n_jobs=4,
+            oob_score=True, random_state=0, verbose=0, warm_start=False)
+results = model_selection.cross_val_score(model, xTrain,yTrain, cv=kfold)
+model.fit(xTrain,yTrain)
+print('Model trained')
 
- xTrain = instanceArray
- yTrain = actionArray
- kfold = model_selection.KFold(n_splits=15, random_state=10)
- model = RandomForestClassifier(n_estimators=100, max_features=5)
- results = model_selection.cross_val_score(model, xTrain,yTrain, cv=kfold)
- model.fit(xTrain,yTrain)
- xTest = []
- for x in range(1000):
-     xTest = []
-     index = random.randint(0,len(instanceArray) - 1)
-     xTest.append(instanceArray[index])#[[0,0.98,0.99,1.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
-     print(yTrain[index])
-     predicted=model.predict(xTest)
-     print(predicted[0])
-     if(predicted[0] != yTrain[index]):
-         print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+filename = 'snakeModel.sav'
+joblib.dump(model, filename)
+print('Model saved')
+# print(xTrain[0])
+# while True:#for i in range(1000):
+#     # start_time = time.time()
+#     n = None
+#     n = input("Enter your value: ") 
+#     print(n)
+#     xTest = []
+#     # index = random.randint(0,len(instanceArray) - 1)
+#     a = None
+#     a = [float(i) for i in n.split(',')]
+#     print(a)
+#     # a.append(n.strip())
+#     xTest.append(a)
+#     print(xTest)
+#     predicted=model.predict(xTest)
+#     score = model.predict_proba(xTest)
+#     # elapsed_time = time.time() - start_time
+#     # print(elapsed_time)
+#     print(predicted[0])
+#     print(score1)
+#     print(score2)
